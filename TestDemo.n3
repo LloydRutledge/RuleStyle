@@ -1,0 +1,62 @@
+@prefix reas:    <http://www.w3.org/2000/10/swap/reason#> .
+@prefix rei:     <http://www.w3.org/2000/10/swap/reify#> .
+@prefix ex:      <http://example.org/#> .
+@prefix eur:     <http://desibo.frsf.utn.edu.ar/ontologies/2012/9/CarMovement.owl#> .
+@prefix fresnel: <http://www.w3.org/2004/09/fresnel#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+
+ex:CarLens a fresnel:Lens               ;
+ fresnel:classLensDomain eur:Rental_Car ;
+ fresnel:showProperties  ( rdfs:label eur:is_assigned_to ) .
+
+ex:MovementLens a fresnel:Lens               ;
+ fresnel:classLensDomain eur:Movement ;
+ fresnel:showProperties  ( rdfs:label eur:has_Rental_Car ) .
+
+ex:explStmtLens a fresnel:Lens ;
+ fresnel:instanceLensDomain """
+  SELECT ?statement WHERE { 
+   ?Inferred a reas:Inference ; 
+   reas:evidence/rdf:rest*/rdf:first ?statement . 
+  }"""^^fresnel:sparqlSelector ;
+ fresnel:showProperties ( rei:subject rei:predicate rei:object ) .
+
+ex:explsLens a fresnel:Lens ;
+ fresnel:purpose         fresnel:defaultLens ;
+ fresnel:classLensDomain reas:Inference      ;
+ fresnel:showProperties  (
+  [ fresnel:property reas:gives    ;
+    fresnel:sublens ex:stmtLens       ]
+  [ fresnel:property reas:evidence ;
+    fresnel:sublens ex:evidLens       ]
+ ) .
+
+ex:stmtLens a fresnel:Lens                            ;
+ fresnel:classLensDomain rei:statement                           ;
+ fresnel:showProperties  ( rei:subject rei:predicate rei:object ) .
+
+ex:evidLens a fresnel:Lens  ;
+ fresnel:classLensDomain reas:Evidence ;
+ fresnel:showProperties ( rdf:first 
+  [ fresnel:property rdf:rest    ;
+    fresnel:sublens  ex:evidLens ;
+    fresnel:depth    "9"^^xsd:nonNegativeInteger ] ) .
+
+ex:Movement_X
+  rdf:type eur:Movement ;
+  rdfs:label "Movement_X" ;
+  eur:has_Rental_Car ex:Car_A .
+
+ex:Car_A
+  rdf:type eur:Rental_Car ;
+  rdfs:label "Car_A" ;
+  eur:is_assigned_to ex:Movement_X .
+
+ex:inf a             reas:Inference ;
+  reas:gives    ( ex:Car_A rdf:type eur:Rental_Car );
+  reas:evidence (
+    (eur:has_Rental_Car rdfs:range eur:Rental_Car)
+    (ex:Movement_X eur:has_Rental_Car ex:Car_A)
+  ) .
