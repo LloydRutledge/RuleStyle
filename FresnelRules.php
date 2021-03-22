@@ -1,5 +1,5 @@
 <?php  define ( "EndpointURLserver"     , "http://localhost:3030/Fresnel/"              ) ;
-  define ( "FreselServerURLprefix" , "http://localhost/TransFresnel.php?resource=" ) ;
+  define ( "FreselServerURLprefix" , "http://localhost/RuleStyle/FresnelRules.php?resource=" ) ;
   define ( "Resource"              , $_GET [ "resource" ]                          ) ; 
 
   define (
@@ -124,7 +124,7 @@
              ) ;
              internalLink ( $object, fragment ( $object ) ) ;
 	     if ( ! emptyRtn ( $qryRtnGiv1 ) ) {
-	         print_r ( "</span><span class='reifyBox' " );
+	       print_r ( "</span> <span class='reifyBox'>" );
 	       internalLink ( "http://example.org/#inf", "(?)" ) ;
 	     }
 	     print_r ( "</span></td></tr>" ) ;
