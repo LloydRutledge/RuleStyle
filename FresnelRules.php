@@ -105,14 +105,14 @@
     } else {
       ?>
         <p> <?php print_r ( fragment ( Resource ) ) ; ?> </p>
-      <table class=resourceBox>
+      <table class='resourceBox'>
         <?php
            foreach ( array_keys ( $propList ) as $key ) {
              $predicate1 = $propList [ $key ] [ 'prop' ] ['value'];
              print_r (
-	       "<tr class=propertyBox><td class=labelBox>" .
+	       "<tr class=propertyBox><td class='labelBox'>" .
                fragment ( $predicate1 ) .
-               "</td><td class=valueBox><p "
+               "</td><td class='objectBox'><span class='valueBox' "
 	     ) ;
              if ( ! emptyRtn ( $qryRtnGiv1 ) )
                print_r ( " style='background-color:yellow' " ) ;
@@ -124,10 +124,10 @@
              ) ;
              internalLink ( $object, fragment ( $object ) ) ;
 	     if ( ! emptyRtn ( $qryRtnGiv1 ) ) {
-	       print_r ( " " ) ;
+	         print_r ( "</span><span class='reifyBox' " );
 	       internalLink ( "http://example.org/#inf", "(?)" ) ;
 	     }
-	     print_r ( "</p></td></tr>" ) ;
+	     print_r ( "</span></td></tr>" ) ;
            } ;
       print_r ( "</table>" ) ;
     }
