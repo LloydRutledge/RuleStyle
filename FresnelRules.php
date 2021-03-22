@@ -1,5 +1,4 @@
-<?php
-  define ( "EndpointURLserver"     , "http://localhost:3030/Fresnel/"              ) ;
+<?php  define ( "EndpointURLserver"     , "http://localhost:3030/Fresnel/"              ) ;
   define ( "FreselServerURLprefix" , "http://localhost/TransFresnel.php?resource=" ) ;
   define ( "Resource"              , $_GET [ "resource" ]                          ) ; 
 
@@ -86,9 +85,6 @@
 <html>
  <head>
   <title>TransFresnel</title>
-  <style type="text/css" media="screen">
-    .inferred { background-color:yellow; }
-  </style>
  </head>
  <body>
   <?php
@@ -109,17 +105,17 @@
     } else {
       ?>
         <p> <?php print_r ( fragment ( Resource ) ) ; ?> </p>
-      <table>
+      <table class=resourceBox>
         <?php
            foreach ( array_keys ( $propList ) as $key ) {
              $predicate1 = $propList [ $key ] [ 'prop' ] ['value'];
              print_r (
-	       "<tr><td>" .
+	       "<tr class=propertyBox><td class=labelBox>" .
                fragment ( $predicate1 ) .
-               "</td><td><p "
+               "</td><td class=valueBox><p "
 	     ) ;
              if ( ! emptyRtn ( $qryRtnGiv1 ) )
-               print_r ( " class='inferred' " ) ;
+               print_r ( " style='background-color:yellow' " ) ;
              print_r ( ">" ) ;
 	     $object = qryRtnCell ( 
                getSPARQLrtn ( " <" . Resource . "> <" . $predicate1 . "> ?object " ) ,
