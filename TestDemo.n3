@@ -17,6 +17,22 @@ ex:reifLinkFormat rdf:type fresnel:Format ;
  transfr:reifyFormatDomain
   "SELECT ?Inferred WHERE { ?Inferred a reas:Inference ;   reas:gives/rdf:first $thisSubject ;   reas:gives/rdf:rest/rdf:first $thisPredicate ;   reas:gives/rdf:rest/rdf:rest/rdf:first $thisObject .  }"^^fresnel:sparqlSelector ; transfr:reifyLabel "(?)"^^xsd:string .
 
+ex:explBox a fresnel:Lens ; fresnel:instanceLensDomain
+ "SELECT ?inference  WHERE {?inference a reas:Inference}"^^fresnel:sparqlSelector ;
+ fresnel:showProperties (
+  [ fresnel:property reas:gives ; fresnel:sublens ex:stmtLens ]
+  [ fresnel:property reas:evidence ; fresnel:sublens ex:evidLens ] ) .
+
+ex:stmtLens a fresnel:Lens ; fresnel:instanceLensDomain
+ "SELECT ?statement  WHERE {?statement a rei:statement}"^^fresnel:sparqlSelector ;
+ fresnel:showProperties ( rei:subject rei:predicate rei:object ) .
+
+ex:evidLens a fresnel:Lens ; fresnel:instanceLensDomain
+ "SELECT ?evidence  WHERE {?Evidence a reas:Evidence}"^^fresnel:sparqlSelector ;
+ fresnel:showProperties ( rdf:first
+  [ fresnel:property rdf:rest ; fresnel:sublens ex:evidLens ;
+    fresnel:depth "9"^^xsd:nonNegativeInteger ] ) .
+
 ex:explsLens a fresnel:Lens ;
  fresnel:classLensDomain reas:Inference ;
  fresnel:showProperties (
