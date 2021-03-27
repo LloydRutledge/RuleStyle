@@ -88,7 +88,7 @@
  </head>
  <body>
   <?php
-    if ( $lens == "http://example.org/#explsLens" ) {
+    if ( $lens == "http://example.org/#explBox" ) {
       print_r ( "<p>Explanation for inference: " ) ;
       foreach ( array_keys ( bindings ( $qryRtnGiv ) ) as $key ) 
         print_r (
