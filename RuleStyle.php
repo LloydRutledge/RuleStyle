@@ -59,7 +59,7 @@ $propList = bindings(getSPARQLrtn(" <" . $lens . "> fresnel:showProperties/rdf:r
 ?>
 <html>
 <head>
-<title>RuleStyle</title>
+<title>RuleStyle <?php print_r ( fragment ( Resource ) ) ; ?> </title>
 </head>
 <body>
   <?php
