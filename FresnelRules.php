@@ -93,7 +93,7 @@ error_reporting(E_ALL ^ E_NOTICE); // turns off notice displays
 
 <html>
  <head>
-  <title>TransFresnel</title>
+  <title>RuleStyle</title>
  </head>
  <body>
   <?php
