@@ -1,9 +1,12 @@
-<?php  define ( "EndpointURLserver"     , "http://localhost:3030/Fresnel/"              ) ;
+<?php
+error_reporting(E_ALL ^ E_NOTICE); // turns off notice displays
+
+  define ( "EndpointURLserver"     , "http://localhost:3030/Fresnel/"              ) ;
   define ( "FreselServerURLprefix" , "http://localhost/RuleStyle/FresnelRules.php?resource=" ) ;
   define ( "Resource"              , $_GET [ "resource" ]                          ) ; 
 
   define (
-    "EndpointURLstart" ,
+    "EndpointURLdecl" ,
     EndpointURLserver .
     "query?output=json&query=" .
     urlencode (
@@ -11,9 +14,11 @@
       "prefix reas: <http://www.w3.org/2000/10/swap/reason#> " .
       "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " .
       "prefix fresnel: <http://www.w3.org/2004/09/fresnel#> " .
-      "SELECT * WHERE { "
+      "prefix rei: <http://www.w3.org/2000/10/swap/reify#> "        
      )
    ) ;
+  
+  define ( "EndpointURLstart" , EndpointURLdecl . urlencode ( "SELECT * WHERE { " ) ) ;
   
   $qryRtnAry = getSPARQLrtn (
     " <" . Resource . "> ?predicate ?object "
@@ -33,6 +38,10 @@
 
   $qryRtnExp = getSPARQLrtn (
     " ?Inferred a reas:Inference ; reas:evidence/rdf:first/rdf:rest*/rdf:first ?statement . "
+  ) ;
+  
+  $lensQueries =  getSPARQLrtn (
+      " ?lens fresnel:instanceLensDomain ?query . "
   ) ;
 
   $lens = qryRtnCell (
@@ -88,7 +97,16 @@
  </head>
  <body>
   <?php
-    if ( $lens == "http://example.org/#explBox" ) {
+  foreach ( array_keys ( bindings ( $lensQueries ) ) as $key ) {
+      $thisLens = qryRtnCell ( $lensQueries, $key, 'lens' ) ;
+      $QResult = json_decode ( file_get_contents (
+          EndpointURLdecl .
+          urlencode ( qryRtnCell ( $lensQueries, $key, 'query' ) )
+          ), true ); 
+      $triggerURI =  qryRtnCell($QResult, 0, 'inference' ) ; 
+      if ( $triggerURI == Resource ) $lens = $thisLens ;
+  }
+  if ( $lens == "http://example.org/#explBox" ) {
       print_r ( "<p>Explanation for inference: " ) ;
       foreach ( array_keys ( bindings ( $qryRtnGiv ) ) as $key ) 
         print_r (
