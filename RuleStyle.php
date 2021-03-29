@@ -37,7 +37,7 @@ function getSPARQLrtn($WHEREcontent)
 
 function internalLink($URL, $anchor)
 {
-    print_r("<a href='" . FreselServerURLprefix . urlencode($URL) . "'>" . $anchor . "</a>");
+    print_r("<a href='" . FreselServerURLprefix . urlencode($URL) . "'>" . $anchor . "</a>\n");
 }
 
 $qryRtnAry = getSPARQLrtn(" <" . Resource . "> ?predicate ?object ");
@@ -57,7 +57,6 @@ $lens = qryRtnCell(getSPARQLrtn(" ?lens fresnel:classLensDomain ?type . <" . Res
 $propList = bindings(getSPARQLrtn(" <" . $lens . "> fresnel:showProperties/rdf:rest*/rdf:first ?prop "));
 
 ?>
-
 <html>
 <head>
 <title>RuleStyle</title>
@@ -75,25 +74,25 @@ if ($lens == "http://example.org/#explBox") {
     print_r("<p>Explanation for inference: ");
     foreach (array_keys(bindings($qryRtnGiv)) as $key)
         print_r(fragment(qryRtnCell($qryRtnGiv, $key, 'statement')) . " ");
-    print_r("</p><p>");
+    print_r("</p>\n<p>");
     foreach (array_keys(bindings($qryRtnExp)) as $key)
         print_r(fragment(qryRtnCell($qryRtnExp, $key, 'statement')) . " ");
-    print_r("</p>");
+    print_r("</p>\n");
 } else {
     ?>
-        <p> <?php print_r ( fragment ( Resource ) ) ; ?> </p>
+	<p> <?php print_r ( fragment ( Resource ) ) ; ?> </p>
 	<table class='resourceBox'>
         <?php
     foreach (array_keys($propList) as $key) {
         $predicate1 = $propList[$key]['prop']['value'];
-        print_r("<tr class=propertyBox><td class='labelBox'>" . fragment($predicate1) . "</td><td class='objectBox'><span class='valueBox' ");
+        print_r("<tr class=propertyBox>\n<td class='labelBox'>" . fragment($predicate1) . "</td>\n<td class='objectBox'>\n<span class='valueBox' ");
         if (! emptyRtn($qryRtnGiv1))
             print_r(" style='background-color:yellow' ");
-        print_r(">");
+        print_r(">\n");
         $object = qryRtnCell(getSPARQLrtn(" <" . Resource . "> <" . $predicate1 . "> ?object "), 0, 'object');
         internalLink($object, fragment($object));
         if (! emptyRtn($qryRtnGiv1)) {
-            print_r("</span> <span class='reifyBox'>");
+            print_r("</span> \n<span class='reifyBox'>");
             internalLink("http://example.org/#inf", "(?)");
         }
         print_r("</span></td></tr>");
@@ -102,7 +101,5 @@ if ($lens == "http://example.org/#explBox") {
     print_r("</table>");
 }
 ?>
-
-</table>
 </body>
 </html>
