@@ -9,22 +9,6 @@ define("EndpointURLdecl", EndpointURLserver . "query?output=json&query=" . urlen
 
 define("EndpointURLstart", EndpointURLdecl . urlencode("SELECT * WHERE { "));
 
-$qryRtnAry = getSPARQLrtn(" <" . Resource . "> ?predicate ?object ");
-
-$qryRtnTyp = getSPARQLrtn(" ?resource a reas:Inference . FILTER ( ?resource = <" . Resource . "> ) ");
-
-$qryRtnGiv1 = getSPARQLrtn(" ?explanation reas:gives/rdf:first <" . Resource . "> ");
-
-$qryRtnGiv = getSPARQLrtn(" ?Inferred a reas:Inference ; reas:gives/rdf:rest*/rdf:first ?statement . ");
-
-$qryRtnExp = getSPARQLrtn(" ?Inferred a reas:Inference ; reas:evidence/rdf:first/rdf:rest*/rdf:first ?statement . ");
-
-$lensQueries = getSPARQLrtn(" ?lens fresnel:instanceLensDomain ?query . ");
-
-$lens = qryRtnCell(getSPARQLrtn(" ?lens fresnel:classLensDomain ?type . <" . Resource . "> rdf:type ?type . "), 0, 'lens');
-
-$propList = bindings(getSPARQLrtn(" <" . $lens . "> fresnel:showProperties/rdf:rest*/rdf:first ?prop "));
-
 function bindings($array)
 {
     return $array['results']['bindings'];
@@ -55,6 +39,22 @@ function internalLink($URL, $anchor)
 {
     print_r("<a href='" . FreselServerURLprefix . urlencode($URL) . "'>" . $anchor . "</a>");
 }
+
+$qryRtnAry = getSPARQLrtn(" <" . Resource . "> ?predicate ?object ");
+
+$qryRtnTyp = getSPARQLrtn(" ?resource a reas:Inference . FILTER ( ?resource = <" . Resource . "> ) ");
+
+$qryRtnGiv1 = getSPARQLrtn(" ?explanation reas:gives/rdf:first <" . Resource . "> ");
+
+$qryRtnGiv = getSPARQLrtn(" ?Inferred a reas:Inference ; reas:gives/rdf:rest*/rdf:first ?statement . ");
+
+$qryRtnExp = getSPARQLrtn(" ?Inferred a reas:Inference ; reas:evidence/rdf:first/rdf:rest*/rdf:first ?statement . ");
+
+$lensQueries = getSPARQLrtn(" ?lens fresnel:instanceLensDomain ?query . ");
+
+$lens = qryRtnCell(getSPARQLrtn(" ?lens fresnel:classLensDomain ?type . <" . Resource . "> rdf:type ?type . "), 0, 'lens');
+
+$propList = bindings(getSPARQLrtn(" <" . $lens . "> fresnel:showProperties/rdf:rest*/rdf:first ?prop "));
 
 ?>
 
@@ -103,5 +103,6 @@ if ($lens == "http://example.org/#explBox") {
 }
 ?>
 
+</table>
 </body>
 </html>
