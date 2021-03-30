@@ -76,6 +76,7 @@ if ($lens == "http://example.org/#explBox") {
 } else {
     ?>
 	<p> <?php print_r ( fragment ( Resource ) ) ;  // show resource fragment ?> </p>
+	<div class='containerBox'>
 	<table class='resourceBox'>
         <?php
     /* if resource has triple with explanation than assign its triples' values a yellow background */
@@ -86,7 +87,7 @@ if ($lens == "http://example.org/#explBox") {
     $showPropList = bindings(getSPARQLrtn(" <" . $lens . "> fresnel:showProperties/rdf:rest*/rdf:first ?prop ")); // showProperties's order list of properties
     foreach (array_keys($showPropList) as $key) { // for each property
         $predicate1 = $showPropList[$key]['prop']['value']; // get the property URI
-        print_r("<tr class=propertyBox>\n"); // Fresnel box model property box
+        print_r("<tr class='propertyBox'>\n"); // Fresnel box model property box
         print_r("<td class='labelBox'>" . fragment($predicate1) . "</td>\n"); // Fresnel box model label box with property label
         print_r("<td class='objectBox'>\n"); // Fresnel box model object box
         print_r("<span class='valueBox' " . $valueStyle . ">\n"); // Fresnel box model value box with style if any
@@ -99,7 +100,7 @@ if ($lens == "http://example.org/#explBox") {
         print_r("</span></td></tr>");
     }
     ;
-    print_r("</table>");
+    print_r("</table></div>");
 }
 ?>
 </body>
