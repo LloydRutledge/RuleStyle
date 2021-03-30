@@ -64,7 +64,7 @@ foreach (array_keys(bindings($lensQueries)) as $key) { // for each lens and its 
 <body>
   <?php
 if ($lens == "http://example.org/#explBox") {
-    print_r("<p>Explanation for inference: ");
+    print_r("<p>Explanation for: ");
     $qryRtnGiv = getSPARQLrtn(" ?Inferred a reas:Inference ; reas:gives/rdf:rest*/rdf:first ?statement . "); // the inferred triple
     foreach (array_keys(bindings($qryRtnGiv)) as $key) // print the triple
         print_r(fragment(qryRtnCell($qryRtnGiv, $key, 'statement')) . " ");
@@ -75,7 +75,7 @@ if ($lens == "http://example.org/#explBox") {
     print_r("</p>\n"); // end of explanation
 } else {
     ?>
-	<p> <?php print_r ( fragment ( Resource ) ) ;  // show resource fragment?> </p>
+	<p> <?php print_r ( fragment ( Resource ) ) ;  // show resource fragment ?> </p>
 	<table class='resourceBox'>
         <?php
     /* if resource has triple with explanation than assign its triples' values a yellow background */
@@ -90,7 +90,7 @@ if ($lens == "http://example.org/#explBox") {
         print_r("<td class='labelBox'>" . fragment($predicate1) . "</td>\n"); // Fresnel box model label box with property label
         print_r("<td class='objectBox'>\n"); // Fresnel box model object box
         print_r("<span class='valueBox' " . $valueStyle . ">\n"); // Fresnel box model value box with style if any
-        $object = qryRtnCell(getSPARQLrtn(" <" . Resource . "> <" . $predicate1 . "> ?object "), 0, 'object'); // get object/value
+        $object = qryRtnCell(getSPARQLrtn(" <" . Resource . "> <" . $predicate1 . "> ?object "), 0, 'object'); // get object
         internalLink($object, fragment($object)); // set Fresnel browser link to object
         if (! emptyRtn($qryRtnGiv1)) {
             print_r("</span> \n<span class='reifyBox'>"); // Fresnel box model reify box 
