@@ -78,22 +78,23 @@ if ($lens == "http://example.org/#explBox") {
 	<p> <?php print_r ( fragment ( Resource ) ) ;  // show resource fragment?> </p>
 	<table class='resourceBox'>
         <?php
-    $qryRtnGiv1 = getSPARQLrtn(" ?explanation reas:gives/rdf:first <" . Resource . "> ");
+    /* if resource has triple with explanation than assign its triples' values a yellow background */
+    $qryRtnGiv1 = getSPARQLrtn(" ?explanation reas:gives/rdf:first <" . Resource . "> "); // query any explanations for triples with this resource as subject 
+    if (! emptyRtn($qryRtnGiv1)) // if there are any
+        $valueStyle = " style='background-color:yellow' "; // then show values here with a yellow background
+    /* walk through the show properties list to show the triples */
     $showPropList = bindings(getSPARQLrtn(" <" . $lens . "> fresnel:showProperties/rdf:rest*/rdf:first ?prop ")); // showProperties's order list of properties
-    foreach (array_keys($showPropList) as $key) {
-        $predicate1 = $showPropList[$key]['prop']['value'];
+    foreach (array_keys($showPropList) as $key) { // for each property
+        $predicate1 = $showPropList[$key]['prop']['value']; // get the property URI
         print_r("<tr class=propertyBox>\n"); // Fresnel box model property box
-        print_r("<td class='labelBox'>" . fragment($predicate1) . "</td>\n"); // Fresnel box model label box
+        print_r("<td class='labelBox'>" . fragment($predicate1) . "</td>\n"); // Fresnel box model label box with property label
         print_r("<td class='objectBox'>\n"); // Fresnel box model object box
-        print_r("<span class='valueBox' "); // Fresnel box model value box
-        if (! emptyRtn($qryRtnGiv1))
-            print_r(" style='background-color:yellow' ");
-        print_r(">\n");
-        $object = qryRtnCell(getSPARQLrtn(" <" . Resource . "> <" . $predicate1 . "> ?object "), 0, 'object');
-        internalLink($object, fragment($object));
+        print_r("<span class='valueBox' " . $valueStyle . ">\n"); // Fresnel box model value box with style if any
+        $object = qryRtnCell(getSPARQLrtn(" <" . Resource . "> <" . $predicate1 . "> ?object "), 0, 'object'); // get object/value
+        internalLink($object, fragment($object)); // set Fresnel browser link to object
         if (! emptyRtn($qryRtnGiv1)) {
-            print_r("</span> \n<span class='reifyBox'>");
-            internalLink("http://example.org/#inf", "(?)");
+            print_r("</span> \n<span class='reifyBox'>"); // Fresnel box model reify box 
+            internalLink("http://example.org/#inf", "(?)"); // Icon link to explanation: FIX: icon from style, query for link
         }
         print_r("</span></td></tr>");
     }
