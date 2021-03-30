@@ -34,17 +34,12 @@ ex:explBox a fresnel:Lens ; fresnel:instanceLensDomain """
   [ fresnel:property reas:gives ; fresnel:sublens ex:stmtLens ]
   [ fresnel:property reas:evidence ; fresnel:sublens ex:evidLens ] ) .
 
-ex:stmtLens a fresnel:Lens ; fresnel:instanceLensDomain """
-  SELECT ?statement
-  WHERE {?statement a rei:statement}"""^^fresnel:sparqlSelector ;
+ex:stmtLens a fresnel:Lens ;
  fresnel:showProperties ( rei:subject rei:predicate rei:object ) .
 
-ex:evidLens a fresnel:Lens ; fresnel:instanceLensDomain """
-  SELECT ?evidence
-  WHERE {?evidence a reas:Evidence}"""^^fresnel:sparqlSelector ;
+ex:evidLens a fresnel:Lens ;
  fresnel:showProperties ( rdf:first
-  [ fresnel:property rdf:rest ; fresnel:sublens ex:evidLens ;
-    fresnel:depth "9"^^xsd:nonNegativeInteger ] ) .
+  [ fresnel:property rdf:rest ; fresnel:sublens ex:evidLens ] ) .
 
 ex:CarLens a fresnel:Lens               ;
  fresnel:classLensDomain eur:Rental_Car ;
