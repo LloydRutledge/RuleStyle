@@ -51,7 +51,7 @@ $lensQueries = getSPARQLrtn(" ?lens fresnel:instanceLensDomain ?query . "); // a
 foreach (array_keys(bindings($lensQueries)) as $key) { // for each lens and its query
     $thisLens = qryRtnCell($lensQueries, $key, 'lens'); // URL for this lens
     $QResult = json_decode(file_get_contents(EndpointURLdecl . urlencode(qryRtnCell($lensQueries, $key, 'query'))), true);
-    $triggerURI = qryRtnCell($QResult, 0, 'inference'); // URL lens query returns as trigger: FIX checks any variable
+    $triggerURI = qryRtnCell($QResult, 0, array_keys(bindings($QResult)[$key])[0]); // URL lens query returns as trigger value of 1st bound variable
     if ($triggerURI == Resource) // this lens's query returns resource: FIX tentatative because only checks first returned
         $lens = $thisLens; // this is the lens to apply for this resource
 }
@@ -99,7 +99,6 @@ if ($lens == "http://example.org/#explBox") {
         }
         print_r("</span></td></tr>");
     }
-    ;
     print_r("</table></div>");
 }
 ?>
