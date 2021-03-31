@@ -7,7 +7,7 @@ define("EndpointURLserver", "http://localhost:3030/Fresnel/");
 define("FreselServerURLprefix", "http://localhost/RuleStyle/FresnelRules.php?resource=");
 define("Resource", $_GET["resource"]);
 
-define("EndpointURLdecl", EndpointURLserver . "query?output=json&query=" . urlencode("prefix ex: <http://example.org/#>" . "prefix reas: <http://www.w3.org/2000/10/swap/reason#> " . "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " . "prefix fresnel: <http://www.w3.org/2004/09/fresnel#> " . "prefix rei: <http://www.w3.org/2000/10/swap/reify#> "));
+define("EndpointURLdecl", EndpointURLserver . "query?output=json&query=" . urlencode("prefix transfr: <http://is.cs.ou.nl/transfr#>" . "prefix ex: <http://example.org/#>" . "prefix reas: <http://www.w3.org/2000/10/swap/reason#> " . "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " . "prefix fresnel: <http://www.w3.org/2004/09/fresnel#> " . "prefix rei: <http://www.w3.org/2000/10/swap/reify#> "));
 
 define("EndpointURLstart", EndpointURLdecl . urlencode("SELECT * WHERE { "));
 
@@ -80,9 +80,7 @@ if ($lens == "http://example.org/#explBox") {
 	<table class='resourceBox'>
         <?php
     /* if resource has triple with explanation than assign its triples' values a yellow background */
-    $qryRtnGiv1 = getSPARQLrtn(" ?explanation reas:gives/rdf:first <" . Resource . "> "); // query any explanations for triples with this resource as subject 
-    if (! emptyRtn($qryRtnGiv1)) // if there are any
-        $valueStyle = " style='background-color:yellow' "; // then show values here with a yellow background
+    $valueStyle = ""; // init as empty check later if stays empty
     /* walk through the show properties list to show the triples */
     $showPropList = bindings(getSPARQLrtn(" <" . $lens . "> fresnel:showProperties/rdf:rest*/rdf:first ?prop ")); // showProperties's order list of properties
     foreach (array_keys($showPropList) as $key) { // for each property
@@ -90,10 +88,21 @@ if ($lens == "http://example.org/#explBox") {
         print_r("<tr class='propertyBox'>\n"); // Fresnel box model property box
         print_r("<td class='labelBox'>" . fragment($predicate1) . "</td>\n"); // Fresnel box model label box with property label
         print_r("<td class='objectBox'>\n"); // Fresnel box model object box
-        print_r("<span class='valueBox' " . $valueStyle . ">\n"); // Fresnel box model value box with style if any
+        print_r("<span class='valueBox' " ); // Fresnel box model value box
+        /* find matching format for the triple */
+        $fmtQueries = getSPARQLrtn(" ?fmt transfr:valueFormatDomain ?query . "); // all formats with valueFormatDomains and their queries
+        foreach (array_keys(bindings($fmtQueries)) as $key) { // for each format and its query
+            $thisFmt = qryRtnCell($fmtQueries, $key, 'fmt'); // URL for this format
+            $QResult = json_decode(file_get_contents(EndpointURLdecl . urlencode(qryRtnCell($fmtQueries, $key, 'query'))), true);
+            $triggerURI = qryRtnCell($QResult, 0, array_keys(bindings($QResult)[$key])[0]); // URL lens query returns as trigger value of 1st bound variable
+            if ($triggerURI == Resource) // this format's query returns resource: FIX tentatative because only checks first returned
+                $valueStyle = " style='background-color:yellow' "; // this is the style to apply for this value: FIX check rest of triple
+        }
+        if ($valueStyle) print_r($valueStyle); // with style if any
+        print_r(" >\n "); // end value box start tag
         $object = qryRtnCell(getSPARQLrtn(" <" . Resource . "> <" . $predicate1 . "> ?object "), 0, 'object'); // get object
         internalLink($object, fragment($object)); // set Fresnel browser link to object
-        if (! emptyRtn($qryRtnGiv1)) {
+        if ($valueStyle != "") {
             print_r("</span> \n<span class='reifyBox'>"); // Fresnel box model reify box 
             internalLink("http://example.org/#inf", "(?)"); // Icon link to explanation: FIX: icon from style, query for link
         }
