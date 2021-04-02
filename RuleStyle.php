@@ -95,8 +95,9 @@ if ($lens == "http://example.org/#explBox") {
             $thisFmt = qryRtnCell($fmtQueries, $key, 'fmt'); // URL for this format
             $QResult = json_decode(file_get_contents(EndpointURLdecl . urlencode(qryRtnCell($fmtQueries, $key, 'query'))), true);
             $triggerURI = qryRtnCell($QResult, 0, array_keys(bindings($QResult)[$key])[0]); // URL lens query returns as trigger value of 1st bound variable
-            if ($triggerURI == Resource) // this format's query returns resource: FIX tentatative because only checks first returned
-                $valueStyle = " style='background-color:yellow' "; // this is the style to apply for this value: FIX check rest of triple
+            // this format's query returns resource: FIX: check rest of triple, tentatative because only checks first returned
+            if ($triggerURI == Resource) 
+                $valueStyle = " style='" . qryRtnCell(getSPARQLrtn( "<" . $thisFmt . "> fresnel:valueStyle ?style . "), 0, 'style') . "' "; // style from format
         }
         if ($valueStyle) print_r($valueStyle); // with style if any
         print_r(" >\n "); // end value box start tag
