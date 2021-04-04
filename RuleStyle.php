@@ -25,7 +25,8 @@ function emptyRtn($array) // is the array empty?
 
 function fragment($URL) // fragment ID from a URI
 {
-    return substr($URL, strpos($URL, "#") + 1);
+    if ( strpos($URL, "#") > 0 ) return substr($URL, strpos($URL, "#") + 1) ;
+    else return $URL;
 }
 
 function qryRtnCell($array, $key, $varName) // returns value assigned to variable in SPARQL return
@@ -104,6 +105,8 @@ function reifyBox($valueStyle)
     }
 }
 
+/* end all functions */
+
 ?>
 <html>
 <head>
@@ -126,17 +129,17 @@ if ($lens == "http://example.org/#explBox") {
 } else {
     ?>
 	<p> <?php print_r ( fragment ( Resource ) ) ;  // show resource fragment ?> </p>
-	<div class='containerBox'>
+	<!-- Each box from the Fresnel box model is encoded here as an HTML element with a class named for the box so CSS can override the default HTML style  --> 
+	<div class='containerBox'> <!-- Fresnel container box here for completeness for specifications although only contains single resource box  --> 
 	<table class='resourceBox'>
         <?php
-    /* if resource has triple with explanation than assign its triples' values a yellow background */
     /* walk through the show properties list to show the triples */
     $showPropList = bindings(getSPARQLrtn(" <" . $lens . "> fresnel:showProperties/rdf:rest*/rdf:first ?prop ")); // showProperties's order list of properties
-    foreach (array_keys($showPropList) as $key) { // for each property
-        $predicate1 = $showPropList[$key]['prop']['value']; // get the property URI
-        propertyBox($fmtQueries, $predicate1);
+    foreach (array_keys($showPropList) as $key) { // for each property in the show properties list
+        $predicate1 = $showPropList[$key]['prop']['value']; // get the current property URI from the show properties list
+        propertyBox($fmtQueries, $predicate1); // output the HTML for the property box for all triples with this resource and property if any
     }
-    print_r("</table></div>");
+    print_r("</table></div>"); // close the resource box then container box
 }
 ?>
 </body>
