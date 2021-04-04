@@ -66,9 +66,9 @@ function getValueStyle($thisPredicate, $thisObject, $fmtQueries) // get the valu
     foreach (array_keys(bindings($fmtQueries)) as $key) { // for each format and its query
         $thisFmt = qryRtnCell($fmtQueries, $key, 'fmt'); // URL for this format
         $QResult = json_decode(file_get_contents(EndpointURLdecl . urlencode(qryRtnCell($fmtQueries, $key, 'query'))), true);
-        $thatSubject = qryRtnCell($QResult, 0, array_keys(bindings($QResult)[$key])[0]); // URL lens query returns as trigger value of 1st bound variable
+        $thatSubject   = qryRtnCell($QResult, 0, array_keys(bindings($QResult)[$key])[0]); // URL lens query returns as trigger value of 1st bound variable
         $thatPredicate = qryRtnCell($QResult, 0, array_keys(bindings($QResult)[$key])[1]); // URL lens query returns as trigger value of 1st bound variable
-        $thatObject = qryRtnCell($QResult, 0, array_keys(bindings($QResult)[$key])[2]); // URL lens query returns as trigger value of 1st bound variable
+        $thatObject    = qryRtnCell($QResult, 0, array_keys(bindings($QResult)[$key])[2]); // URL lens query returns as trigger value of 1st bound variable
         if ($thatSubject == Resource && $thatPredicate == $thisPredicate )
             $valueStyle = " style='" . qryRtnCell(getSPARQLrtn("<" . $thisFmt . "> fresnel:valueStyle ?style . "), 0, 'style') . "' "; // style from format
     }
@@ -79,22 +79,24 @@ function propertyBox($fmtQueries, $predicate1)
 {
     print_r("<tr class='propertyBox'>\n"); // Fresnel box model property box
     print_r("<td class='labelBox'>" . fragment($predicate1) . "</td>\n"); // Fresnel box model label box with property label
-    print_r("<td class='objectBox'>\n"); // Fresnel box model object box
-    $valueStyle = valueBox($fmtQueries, $predicate1);
-    reifyBox($valueStyle);
+    objectBox($fmtQueries, $predicate1);
     print_r("</td></tr>");
+}
+
+function objectBox($fmtQueries, $predicate1)
+{
+    $valueStyle = getValueStyle($predicate1, "XXX", $fmtQueries); // FIX: implement object match
+    print_r("<td class='objectBox'" . $valueStyle ." >\n"); // Fresnel box model object box
+    valueBox($fmtQueries, $predicate1);
+    reifyBox($valueStyle);
 }
 
 function valueBox($fmtQueries, $predicate1)
 {
-    print_r("<span class='valueBox' "); // Fresnel box model value box
-    $valueStyle = getValueStyle($predicate1, "XXX", $fmtQueries);
-    print_r($valueStyle); // with style if any
-    print_r(" >\n "); // end value box start tag
     $object = qryRtnCell(getSPARQLrtn(" <" . Resource . "> <" . $predicate1 . "> ?object "), 0, 'object'); // get object
+    print_r("<span class='valueBox' >\n"); // Fresnel box model value box
     internalLink($object, fragment($object)); // set Fresnel browser link to object
     print_r("</span> \n");
-    return $valueStyle;
 }
 
 function reifyBox($valueStyle)
