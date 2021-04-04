@@ -43,7 +43,7 @@ ex:evidLens a fresnel:Lens ;
 
 ex:CarLens a fresnel:Lens               ;
  fresnel:classLensDomain eur:Rental_Car ;
- fresnel:showProperties  ( rdfs:label eur:is_assigned_to ) .
+ fresnel:showProperties  ( rdfs:label rdf:type ) .
 
 ex:MovementLens a fresnel:Lens               ;
  fresnel:classLensDomain eur:Movement ;

@@ -60,15 +60,16 @@ function getLens()
     return $lens;
 }
 
-function getValueStyle($fmtQueries) // get the value style CSS code from any format for the current value box
+function getValueStyle($thisPredicate, $thisObject, $fmtQueries) // get the value style CSS code from any format for the current value box
 {
     $valueStyle = ""; // initialize variable to value checked for later as meaning no style
     foreach (array_keys(bindings($fmtQueries)) as $key) { // for each format and its query
         $thisFmt = qryRtnCell($fmtQueries, $key, 'fmt'); // URL for this format
         $QResult = json_decode(file_get_contents(EndpointURLdecl . urlencode(qryRtnCell($fmtQueries, $key, 'query'))), true);
-        $triggerURI = qryRtnCell($QResult, 0, array_keys(bindings($QResult)[$key])[0]); // URL lens query returns as trigger value of 1st bound variable
-                                                                                        // this format's query returns resource: FIX: check rest of triple, tentatative because only checks first returned
-        if ($triggerURI == Resource)
+        $thatSubject = qryRtnCell($QResult, 0, array_keys(bindings($QResult)[$key])[0]); // URL lens query returns as trigger value of 1st bound variable
+        $thatPredicate = qryRtnCell($QResult, 0, array_keys(bindings($QResult)[$key])[1]); // URL lens query returns as trigger value of 1st bound variable
+        $thatObject = qryRtnCell($QResult, 0, array_keys(bindings($QResult)[$key])[2]); // URL lens query returns as trigger value of 1st bound variable
+        if ($thatSubject == Resource && $thatPredicate == $thisPredicate )
             $valueStyle = " style='" . qryRtnCell(getSPARQLrtn("<" . $thisFmt . "> fresnel:valueStyle ?style . "), 0, 'style') . "' "; // style from format
     }
     return $valueStyle;
@@ -87,7 +88,7 @@ function propertyBox($fmtQueries, $predicate1)
 function valueBox($fmtQueries, $predicate1)
 {
     print_r("<span class='valueBox' "); // Fresnel box model value box
-    $valueStyle = getValueStyle($fmtQueries);
+    $valueStyle = getValueStyle($predicate1, "XXX", $fmtQueries);
     print_r($valueStyle); // with style if any
     print_r(" >\n "); // end value box start tag
     $object = qryRtnCell(getSPARQLrtn(" <" . Resource . "> <" . $predicate1 . "> ?object "), 0, 'object'); // get object
