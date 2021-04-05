@@ -7,13 +7,73 @@
   xmlns:eur="http://desibo.frsf.utn.edu.ar/ontologies/2012/9/CarMovement.owl#"
   xmlns:reas="http://www.w3.org/2000/10/swap/reason#"
 >
+  <reas:Inference rdf:about="http://example.org/#inf">
+    <reas:evidence rdf:parseType="Collection">
+      <rdf:Description rdf:nodeID="f1e7345ca18fa43939b70e30ffa5a2736b15">
+        <rdf:first rdf:resource="http://desibo.frsf.utn.edu.ar/ontologies/2012/9/CarMovement.owl#has_Rental_Car"/>
+        <rdf:rest rdf:parseType="Collection">
+          <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#range"/>
+          <rdf:Description rdf:about="http://desibo.frsf.utn.edu.ar/ontologies/2012/9/CarMovement.owl#Rental_Car"/>
+        </rdf:rest>
+      </rdf:Description>
+      <rdf:Description rdf:nodeID="f1e7345ca18fa43939b70e30ffa5a2736b18">
+        <rdf:first>
+          <eur:Movement rdf:about="http://example.org/#Movement_X">
+            <rdfs:label>Movement_X</rdfs:label>
+            <eur:has_Rental_Car rdf:resource="http://example.org/#Car_A"/>
+          </eur:Movement>
+        </rdf:first>
+        <rdf:rest rdf:parseType="Collection">
+          <rdf:Description rdf:about="http://desibo.frsf.utn.edu.ar/ontologies/2012/9/CarMovement.owl#has_Rental_Car"/>
+          <rdf:Description rdf:about="http://example.org/#Car_A"/>
+        </rdf:rest>
+      </rdf:Description>
+    </reas:evidence>
+    <reas:gives rdf:parseType="Collection">
+      <rdf:Description rdf:about="http://example.org/#Car_A"/>
+      <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"/>
+      <rdf:Description rdf:about="http://desibo.frsf.utn.edu.ar/ontologies/2012/9/CarMovement.owl#Rental_Car"/>
+    </reas:gives>
+  </reas:Inference>
+  <fresnel:Lens rdf:about="http://example.org/#MovementLens">
+    <fresnel:showProperties rdf:parseType="Collection">
+      <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#label"/>
+      <rdf:Description rdf:about="http://desibo.frsf.utn.edu.ar/ontologies/2012/9/CarMovement.owl#has_Rental_Car"/>
+    </fresnel:showProperties>
+    <fresnel:classLensDomain rdf:resource="http://desibo.frsf.utn.edu.ar/ontologies/2012/9/CarMovement.owl#Movement"/>
+  </fresnel:Lens>
+  <fresnel:Lens rdf:about="http://example.org/#CarLens">
+    <fresnel:classLensDomain rdf:resource="http://desibo.frsf.utn.edu.ar/ontologies/2012/9/CarMovement.owl#Rental_Car"/>
+    <fresnel:showProperties rdf:parseType="Collection">
+      <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#label"/>
+      <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"/>
+    </fresnel:showProperties>
+  </fresnel:Lens>
+  <fresnel:Format rdf:about="http://example.org/#reifLinkFormat">
+    <transfr:reifyLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string">(?)</transfr:reifyLabel>
+    <transfr:reifyFormatDomain rdf:datatype="http://www.w3.org/2004/09/fresnel#sparqlSelector">
+  SELECT ?Inferred WHERE { ?Inferred a reas:Inference ;
+   reas:gives/rdf:first $thisSubject ;
+   reas:gives/rdf:rest/rdf:first $thisPredicate ;
+   reas:gives/rdf:rest/rdf:rest/rdf:first $thisObject .
+  }</transfr:reifyFormatDomain>
+  </fresnel:Format>
+  <fresnel:Format rdf:about="http://example.org/#infFormat">
+    <transfr:objectStyle rdf:datatype="http://www.w3.org/2004/09/fresnel#stylingInstructions">background-color:yellow</transfr:objectStyle>
+    <transfr:objectFormatDomain rdf:datatype="http://www.w3.org/2004/09/fresnel#sparqlSelector">
+  SELECT ?thisSubject ?thisPredicate ?thisObject
+  WHERE { ?Inferred a reas:Inference ;
+   reas:gives/rdf:first $thisSubject ;
+   reas:gives/rdf:rest/rdf:first $thisPredicate ;
+   reas:gives/rdf:rest/rdf:rest/rdf:first $thisObject .
+  }</transfr:objectFormatDomain>
+  </fresnel:Format>
   <fresnel:Lens rdf:about="http://example.org/#explBox">
     <fresnel:instanceLensDomain rdf:datatype="http://www.w3.org/2004/09/fresnel#sparqlSelector">
   SELECT ?inference
   WHERE {?inference a reas:Inference}</fresnel:instanceLensDomain>
     <fresnel:showProperties rdf:parseType="Collection">
       <rdf:Description rdf:nodeID="ub2bL33C3">
-        <fresnel:property rdf:resource="http://www.w3.org/2000/10/swap/reason#gives"/>
         <fresnel:sublens>
           <fresnel:Lens rdf:about="http://example.org/#stmtLens">
             <fresnel:showProperties rdf:parseType="Collection">
@@ -23,6 +83,7 @@
             </fresnel:showProperties>
           </fresnel:Lens>
         </fresnel:sublens>
+        <fresnel:property rdf:resource="http://www.w3.org/2000/10/swap/reason#gives"/>
       </rdf:Description>
       <rdf:Description rdf:nodeID="ub2bL34C3">
         <fresnel:property rdf:resource="http://www.w3.org/2000/10/swap/reason#evidence"/>
@@ -40,69 +101,12 @@
       </rdf:Description>
     </fresnel:showProperties>
   </fresnel:Lens>
-  <fresnel:Format rdf:about="http://example.org/#reifLinkFormat">
-    <transfr:reifyLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string">(?)</transfr:reifyLabel>
-    <transfr:reifyFormatDomain rdf:datatype="http://www.w3.org/2004/09/fresnel#sparqlSelector">
-  SELECT ?Inferred WHERE { ?Inferred a reas:Inference ;
-   reas:gives/rdf:first $thisSubject ;
-   reas:gives/rdf:rest/rdf:first $thisPredicate ;
-   reas:gives/rdf:rest/rdf:rest/rdf:first $thisObject .
-  }</transfr:reifyFormatDomain>
-  </fresnel:Format>
-  <fresnel:Lens rdf:about="http://example.org/#MovementLens">
-    <fresnel:showProperties rdf:parseType="Collection">
-      <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#label"/>
-      <rdf:Description rdf:about="http://desibo.frsf.utn.edu.ar/ontologies/2012/9/CarMovement.owl#has_Rental_Car"/>
-    </fresnel:showProperties>
-    <fresnel:classLensDomain rdf:resource="http://desibo.frsf.utn.edu.ar/ontologies/2012/9/CarMovement.owl#Movement"/>
-  </fresnel:Lens>
-  <fresnel:Lens rdf:about="http://example.org/#CarLens">
-    <fresnel:classLensDomain rdf:resource="http://desibo.frsf.utn.edu.ar/ontologies/2012/9/CarMovement.owl#Rental_Car"/>
-    <fresnel:showProperties rdf:parseType="Collection">
-      <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#label"/>
-      <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"/>
-    </fresnel:showProperties>
-  </fresnel:Lens>
-  <fresnel:Format rdf:about="http://example.org/#infFormat">
-    <fresnel:valueStyle rdf:datatype="http://www.w3.org/2004/09/fresnel#stylingInstructions">background-color:yellow</fresnel:valueStyle>
-    <transfr:valueFormatDomain rdf:datatype="http://www.w3.org/2004/09/fresnel#sparqlSelector">
-  SELECT ?thisSubject ?thisPredicate ?thisObject
-  WHERE { ?Inferred a reas:Inference ;
-   reas:gives/rdf:first $thisSubject ;
-   reas:gives/rdf:rest/rdf:first $thisPredicate ;
-   reas:gives/rdf:rest/rdf:rest/rdf:first $thisObject .
-  }</transfr:valueFormatDomain>
-  </fresnel:Format>
-  <reas:Inference rdf:about="http://example.org/#inf">
-    <reas:gives rdf:parseType="Collection">
-      <rdf:Description rdf:about="http://example.org/#Car_A"/>
-      <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"/>
-      <rdf:Description rdf:about="http://desibo.frsf.utn.edu.ar/ontologies/2012/9/CarMovement.owl#Rental_Car"/>
-    </reas:gives>
-    <reas:evidence rdf:parseType="Collection">
-      <rdf:Description rdf:nodeID="fab3b4f1e5fad418b8f9b620e4be9f631b15">
-        <rdf:first rdf:resource="http://desibo.frsf.utn.edu.ar/ontologies/2012/9/CarMovement.owl#has_Rental_Car"/>
-        <rdf:rest rdf:parseType="Collection">
-          <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#range"/>
-          <rdf:Description rdf:about="http://desibo.frsf.utn.edu.ar/ontologies/2012/9/CarMovement.owl#Rental_Car"/>
-        </rdf:rest>
-      </rdf:Description>
-      <rdf:Description rdf:nodeID="fab3b4f1e5fad418b8f9b620e4be9f631b18">
-        <rdf:first>
-          <eur:Movement rdf:about="http://example.org/#Movement_X">
-            <eur:has_Rental_Car rdf:resource="http://example.org/#Car_A"/>
-            <rdfs:label>Movement_X</rdfs:label>
-          </eur:Movement>
-        </rdf:first>
-        <rdf:rest rdf:parseType="Collection">
-          <rdf:Description rdf:about="http://desibo.frsf.utn.edu.ar/ontologies/2012/9/CarMovement.owl#has_Rental_Car"/>
-          <rdf:Description rdf:about="http://example.org/#Car_A"/>
-        </rdf:rest>
-      </rdf:Description>
-    </reas:evidence>
-  </reas:Inference>
   <eur:Rental_Car rdf:about="http://example.org/#Car_A">
     <eur:is_assigned_to rdf:resource="http://example.org/#Movement_X"/>
     <rdfs:label>Car_A</rdfs:label>
   </eur:Rental_Car>
+  <rdf:Description rdf:nodeID="f1e7345ca18fa43939b70e30ffa5a2736b22">
+    <rdf:first rdf:nodeID="f1e7345ca18fa43939b70e30ffa5a2736b18"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
 </rdf:RDF>

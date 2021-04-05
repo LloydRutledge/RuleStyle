@@ -9,14 +9,14 @@
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
 
 ex:infFormat rdf:type fresnel:Format ;
- transfr:valueFormatDomain """
+ transfr:objectFormatDomain """
   SELECT ?thisSubject ?thisPredicate ?thisObject
   WHERE { ?Inferred a reas:Inference ;
    reas:gives/rdf:first $thisSubject ;
    reas:gives/rdf:rest/rdf:first $thisPredicate ;
    reas:gives/rdf:rest/rdf:rest/rdf:first $thisObject .
   }"""^^fresnel:sparqlSelector ;
- fresnel:valueStyle "background-color:yellow"^^fresnel:stylingInstructions .
+ transfr:objectStyle "background-color:yellow"^^fresnel:stylingInstructions .
 
 ex:reifLinkFormat rdf:type fresnel:Format ;
  transfr:reifyFormatDomain """
