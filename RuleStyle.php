@@ -12,7 +12,6 @@ define("EndpointURLdecl", EndpointURLserver . "query?output=json&query=" . urlen
 define("EndpointURLstart", EndpointURLdecl . urlencode("SELECT * WHERE { "));
 
 /* all functions */
-
 function bindings($array) // SPARQL query bindings
 {
     return $array['results']['bindings'];
@@ -25,8 +24,10 @@ function emptyRtn($array) // is the array empty?
 
 function fragment($URL) // fragment ID from a URI
 {
-    if ( strpos($URL, "#") > 0 ) return substr($URL, strpos($URL, "#") + 1) ;
-    else return $URL;
+    if (strpos($URL, "#") > 0)
+        return substr($URL, strpos($URL, "#") + 1);
+    else
+        return $URL;
 }
 
 function qryRtnCell($array, $key, $varName) // returns value assigned to variable in SPARQL return
@@ -69,7 +70,7 @@ function getValueStyle($thisPredicate, $thisObject, $fmtQueries) // get the valu
         $thatSubject   = qryRtnCell($QResult, 0, array_keys(bindings($QResult)[$key])[0]); // URL lens query returns as trigger value of 1st bound variable
         $thatPredicate = qryRtnCell($QResult, 0, array_keys(bindings($QResult)[$key])[1]); // URL lens query returns as trigger value of 1st bound variable
         $thatObject    = qryRtnCell($QResult, 0, array_keys(bindings($QResult)[$key])[2]); // URL lens query returns as trigger value of 1st bound variable
-        if ($thatSubject == Resource && $thatPredicate == $thisPredicate )
+        if ($thatSubject == Resource && $thatPredicate == $thisPredicate)
             $valueStyle = " style='" . qryRtnCell(getSPARQLrtn("<" . $thisFmt . "> fresnel:valueStyle ?style . "), 0, 'style') . "' "; // style from format
     }
     return $valueStyle;
@@ -78,11 +79,11 @@ function getValueStyle($thisPredicate, $thisObject, $fmtQueries) // get the valu
 function propertyBox($fmtQueries, $predicate1)
 {
     print_r("<tr class='propertyBox'>\n"); // Fresnel box model property box
-    print_r("<td class='labelBox'>" ); // Fresnel box model label box with property label
-    if ( $predicate1 == "b0" ) { // if current show property in list is 1st blank node which in this example is for the explBox lens because of sublenses
+    print_r("<td class='labelBox'>"); // Fresnel box model label box with property label
+    if ($predicate1 == "b0") { // if current show property in list is 1st blank node which in this example is for the explBox lens because of sublenses
         print_r("Explanation for: ");
-    } elseif ( $predicate1 != "b1"  ) { // if current show property in list is after 1st blank node which in this example is for the explBox lens because of sublenses
-        print_r(fragment($predicate1) );
+    } elseif ($predicate1 != "b1") { // if current show property in list is after 1st blank node which in this example is for the explBox lens because of sublenses
+        print_r(fragment($predicate1));
     }
     print_r("</td>\n");
     objectBox($fmtQueries, $predicate1);
@@ -92,7 +93,7 @@ function propertyBox($fmtQueries, $predicate1)
 function objectBox($fmtQueries, $predicate1)
 {
     $valueStyle = getValueStyle($predicate1, "XXX", $fmtQueries); // FIX: implement object match
-    print_r("<td class='objectBox' ". $valueStyle . " >\n"); // Fresnel box model object box
+    print_r("<td class='objectBox' " . $valueStyle . " >\n"); // Fresnel box model object box
     valueBox($fmtQueries, $predicate1);
     reifyBox($valueStyle);
 }
@@ -145,11 +146,11 @@ $showPropList = bindings(getSPARQLrtn(" <" . $lens . "> fresnel:showProperties/r
 		<!-- Fresnel container box here for completeness for specifications although only contains single resource box  -->
 		<table class='resourceBox'>
         <?php
-            /* walk through the show properties list to show the triples */
-            foreach (array_keys($showPropList) as $key) { // for each property in the show properties list
-                $predicate1 = $showPropList[$key]['prop']['value']; // get the current property URI from the show properties list
-                propertyBox($fmtQueries, $predicate1); // output the HTML for the property box for all triples with this resource and property if any
-            }
+        /* walk through the show properties list to show the triples */
+        foreach (array_keys($showPropList) as $key) { // for each property in the show properties list
+            $predicate1 = $showPropList[$key]['prop']['value']; // get the current property URI from the show properties list
+            propertyBox($fmtQueries, $predicate1); // output the HTML for the property box for all triples with this resource and property if any
+        }
         print_r("</table></div>"); // close the resource box then container box
         ?>
 </body>
