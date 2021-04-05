@@ -110,6 +110,12 @@ function reifyBox($valueStyle)
 
 /* end all functions */
 
+/* Load variables for whole display */
+
+$lens = getLens();
+$fmtQueries = getSPARQLrtn(" ?fmt transfr:valueFormatDomain ?query . "); // all formats with valueFormatDomains and their queries
+$showPropList = bindings(getSPARQLrtn(" <" . $lens . "> fresnel:showProperties/rdf:rest*/rdf:first ?prop ")); // showProperties's order list of properties
+
 ?>
 <html>
 <head>
@@ -117,33 +123,30 @@ function reifyBox($valueStyle)
 </head>
 <body>
   <?php
-  $lens=getLens();
-$fmtQueries = getSPARQLrtn(" ?fmt transfr:valueFormatDomain ?query . "); // all formats with valueFormatDomains and their queries
-if ($lens == "http://example.org/#explBox") {
-    print_r("<p>Explanation for: ");
-    $qryRtnGiv = getSPARQLrtn(" ?Inferred a reas:Inference ; reas:gives/rdf:rest*/rdf:first ?statement . "); // the inferred triple
-    foreach (array_keys(bindings($qryRtnGiv)) as $key) // print the triple
-        print_r(fragment(qryRtnCell($qryRtnGiv, $key, 'statement')) . " ");
-    print_r("</p>\n<p>"); // between triple and explanation
-    $qryRtnExp = getSPARQLrtn(" ?Inferred a reas:Inference ; reas:evidence/rdf:first/rdf:rest*/rdf:first ?statement . "); // an inference's explanation
-    foreach (array_keys(bindings($qryRtnExp)) as $key) // dipslay each statement
-        print_r(fragment(qryRtnCell($qryRtnExp, $key, 'statement')) . " ");
-    print_r("</p>\n"); // end of explanation
-} else {
-    ?>
-	<p> <?php print_r ( fragment ( Resource ) ) ;  // show resource fragment ?> </p>
-	<!-- Each box from the Fresnel box model is encoded here as an HTML element with a class named for the box so CSS can override the default HTML style  --> 
-	<div class='containerBox'> <!-- Fresnel container box here for completeness for specifications although only contains single resource box  --> 
-	<table class='resourceBox'>
-        <?php
-    /* walk through the show properties list to show the triples */
-    $showPropList = bindings(getSPARQLrtn(" <" . $lens . "> fresnel:showProperties/rdf:rest*/rdf:first ?prop ")); // showProperties's order list of properties
-    foreach (array_keys($showPropList) as $key) { // for each property in the show properties list
-        $predicate1 = $showPropList[$key]['prop']['value']; // get the current property URI from the show properties list
-        propertyBox($fmtQueries, $predicate1); // output the HTML for the property box for all triples with this resource and property if any
-    }
-    print_r("</table></div>"); // close the resource box then container box
-}
 ?>
+	<!-- Each box from the Fresnel box model is encoded here as an HTML element with a class named for the box so CSS can override the default HTML style  -->
+	<div class='containerBox'>
+		<!-- Fresnel container box here for completeness for specifications although only contains single resource box  -->
+		<table class='resourceBox'>
+        <?php
+        if ($lens == "http://example.org/#explBox") {
+            print_r("<p>Explanation for: ");
+            $qryRtnGiv = getSPARQLrtn(" ?Inferred a reas:Inference ; reas:gives/rdf:rest*/rdf:first ?statement . "); // the inferred triple
+            foreach (array_keys(bindings($qryRtnGiv)) as $key) // print the triple
+                print_r(fragment(qryRtnCell($qryRtnGiv, $key, 'statement')) . " ");
+            print_r("</p>\n<p>"); // between triple and explanation
+            $qryRtnExp = getSPARQLrtn(" ?Inferred a reas:Inference ; reas:evidence/rdf:first/rdf:rest*/rdf:first ?statement . "); // an inference's explanation
+            foreach (array_keys(bindings($qryRtnExp)) as $key) // dipslay each statement
+                print_r(fragment(qryRtnCell($qryRtnExp, $key, 'statement')) . " ");
+            print_r("</p>\n"); // end of explanation
+        } else {
+            /* walk through the show properties list to show the triples */
+            foreach (array_keys($showPropList) as $key) { // for each property in the show properties list
+                $predicate1 = $showPropList[$key]['prop']['value']; // get the current property URI from the show properties list
+                propertyBox($fmtQueries, $predicate1); // output the HTML for the property box for all triples with this resource and property if any
+            }
+        }
+        print_r("</table></div>"); // close the resource box then container box
+        ?>
 </body>
 </html>
