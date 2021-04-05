@@ -61,12 +61,12 @@ function getLens()
     return $lens;
 }
 
-function getobjectStyle($thisPredicate, $thisObject, $valFmtQs) // get the value style CSS code from any format for the current value box
+function getobjectStyle($thisPredicate, $thisObject, $objFmtQs) // get the value style CSS code from any format for the current value box
 {
     $objectStyle = ""; // initialize variable to value checked for later as meaning no style
-    foreach (array_keys(bindings($valFmtQs)) as $key) { // for each format and its query
-        $thisFmt = qryRtnCell($valFmtQs, $key, 'fmt'); // URL for this format
-        $QResult = json_decode(file_get_contents(EndpointURLdecl . urlencode(qryRtnCell($valFmtQs, $key, 'query'))), true);
+    foreach (array_keys(bindings($objFmtQs)) as $key) { // for each format and its query
+        $thisFmt = qryRtnCell($objFmtQs, $key, 'fmt'); // URL for this format
+        $QResult = json_decode(file_get_contents(EndpointURLdecl . urlencode(qryRtnCell($objFmtQs, $key, 'query'))), true);
         $thatSubject   = qryRtnCell($QResult, 0, array_keys(bindings($QResult)[$key])[0]); // URL lens query returns as trigger value of 1st bound variable
         $thatPredicate = qryRtnCell($QResult, 0, array_keys(bindings($QResult)[$key])[1]); // URL lens query returns as trigger value of 1st bound variable
         $thatObject    = qryRtnCell($QResult, 0, array_keys(bindings($QResult)[$key])[2]); // URL lens query returns as trigger value of 1st bound variable
@@ -76,11 +76,11 @@ function getobjectStyle($thisPredicate, $thisObject, $valFmtQs) // get the value
     return $objectStyle;
 }
 
-function propertyBox($valFmtQs, $thisPredicate)
+function propertyBox($objFmtQs, $reifFmtQs, $thisPredicate)
 {
     print_r("<tr class='propertyBox'>\n"); // Fresnel box model property box
     labelBox($thisPredicate);
-    objectBox($valFmtQs, $thisPredicate);
+    objectBox($objFmtQs, $reifFmtQs, $thisPredicate);
     print_r("</td></tr>");
 }
 
@@ -95,12 +95,12 @@ function labelBox($thisPredicate)
     print_r("</td>\n");
 }
 
-function objectBox($valFmtQs, $thisPredicate)
+function objectBox($objFmtQs, $reifFmtQs, $thisPredicate)
 {
-    $objectStyle = getobjectStyle($thisPredicate, "put thisObject here later", $valFmtQs); // FIX: implement object match
+    $objectStyle = getobjectStyle($thisPredicate, "put thisObject here later", $objFmtQs); // FIX: implement object match
     print_r("<td class='objectBox' " . $objectStyle . " >\n"); // Fresnel box model object box
     valueBox($thisPredicate);
-    reifyBox($objectStyle);
+    reifyBox($reifFmtQs, $objectStyle);
 }
 
 function valueBox($thisPredicate)
@@ -114,18 +114,19 @@ function valueBox($thisPredicate)
         $qryRtnExp = getSPARQLrtn(" ?Inferred a reas:Inference ; reas:evidence/rdf:first/rdf:rest*/rdf:first ?statement . "); // an inference's explanation
         foreach (array_keys(bindings($qryRtnExp)) as $key) // dipslay each statement
             print_r(fragment(qryRtnCell($qryRtnExp, $key, 'statement')) . " ");
-    } elseif ($thisPredicate != "b1") { // if normal
+    } else { // if normal
         $object = qryRtnCell(getSPARQLrtn(" <" . Resource . "> <" . $thisPredicate . "> ?object "), 0, 'object'); // get object
         internalLink($object, fragment($object)); // set Fresnel browser link to object
     }
     print_r("</span> \n");
 }
 
-function reifyBox($objectStyle)
+function reifyBox($reifFmtQs, $objectStyle)
 {
     if ($objectStyle != "") {
         print_r("<span class='reifyBox'>"); // Fresnel box model reify box
-        internalLink("http://example.org/#inf", "(?)"); // Icon link to explanation: FIX: icon from style, query for link
+        $reifyLabel = qryRtnCell(getSPARQLrtn(" ?reifyFormatDomain transfr:reifyLabel ?reifyLabel "), 0, 'reifyLabel'); // FIX: now only one format
+        internalLink("http://example.org/#inf", $reifyLabel); // Icon link to explanation: FIX: icon from style, query for link
         print_r("</span>");
     }
 }
@@ -134,7 +135,8 @@ function reifyBox($objectStyle)
 
 /* Load variables for whole display */
 
-$valFmtQs = getSPARQLrtn(" ?fmt transfr:objectFormatDomain ?query . "); // all formats with valueFormatDomains and their queries
+$objFmtQs  = getSPARQLrtn(" ?fmt transfr:objectFormatDomain ?query . "); // all formats with objectFormatDomains and their queries
+$reifFmtQs = getSPARQLrtn(" ?fmt transfr:reifyFormatDomain  ?query . "); // above for reify
 $lens = getLens();
 $showPropList = bindings(getSPARQLrtn(" <" . $lens . "> fresnel:showProperties/rdf:rest*/rdf:first ?prop ")); // showProperties's list of properties
 
@@ -154,7 +156,7 @@ $showPropList = bindings(getSPARQLrtn(" <" . $lens . "> fresnel:showProperties/r
         /* walk through the show properties list to show the triples */
         foreach (array_keys($showPropList) as $key) { // for each property in the show properties list
             $thisPredicate = $showPropList[$key]['prop']['value']; // get the current property URI from the show properties list
-            propertyBox($valFmtQs, $thisPredicate); // output the HTML for the property box for all triples with this resource and property if any
+            propertyBox($objFmtQs, $reifFmtQs, $thisPredicate); // output the HTML for the property box for all triples with this resource and property if any
         }
         print_r("</table></div>"); // close the resource box then container box
         ?>
