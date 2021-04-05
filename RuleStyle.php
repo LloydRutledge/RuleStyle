@@ -76,6 +76,8 @@ function getobjectStyle($thisPredicate, $thisObject, $objFmtQs) // get the value
     return $objectStyle;
 }
 
+/* start Box model box functions */
+
 function propertyBox($objFmtQs, $reifFmtQs, $thisPredicate)
 {
     print_r("<tr class='propertyBox'>\n"); // Fresnel box model property box
@@ -112,7 +114,11 @@ function valueBox($thisPredicate)
             print_r(fragment(qryRtnCell($qryRtnGiv, $key, 'statement')) . " ");
     } elseif ($thisPredicate == "b1") {
         $qryRtnExp = getSPARQLrtn(" ?Inferred a reas:Inference ; reas:evidence/rdf:first/rdf:rest*/rdf:first ?statement . "); // an inference's explanation
-        foreach (array_keys(bindings($qryRtnExp)) as $key) // dipslay each statement
+        foreach (array_keys(bindings($qryRtnExp)) as $key) // dipslay statement #1
+            print_r(fragment(qryRtnCell($qryRtnExp, $key, 'statement')) . " ");
+        print_r("<br/>");
+        $qryRtnExp = getSPARQLrtn(" ?Inferred a reas:Inference ; reas:evidence/rdf:rest/rdf:first/rdf:rest*/rdf:first ?statement . "); // an inference's explanation
+        foreach (array_keys(bindings($qryRtnExp)) as $key) // dipslay statement #2
             print_r(fragment(qryRtnCell($qryRtnExp, $key, 'statement')) . " ");
     } else { // if normal
         $object = qryRtnCell(getSPARQLrtn(" <" . Resource . "> <" . $thisPredicate . "> ?object "), 0, 'object'); // get object
@@ -131,6 +137,7 @@ function reifyBox($reifFmtQs, $objectStyle)
     }
 }
 
+/* end Box model box functions */
 /* end all functions */
 
 /* Load variables for whole display */
