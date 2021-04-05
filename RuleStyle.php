@@ -77,10 +77,22 @@ function getValueStyle($thisPredicate, $thisObject, $fmtQueries) // get the valu
 
 function propertyBox($fmtQueries, $predicate1)
 {
-    print_r("<tr class='propertyBox'>\n"); // Fresnel box model property box
-    print_r("<td class='labelBox'>" . fragment($predicate1) . "</td>\n"); // Fresnel box model label box with property label
-    objectBox($fmtQueries, $predicate1);
-    print_r("</td></tr>");
+    if ( $predicate1 == "b0" ) { // if current show property in list is 1st blank node which in this example is for the explBox lens because of sublenses
+        print_r("<p>Explanation for: ");
+        $qryRtnGiv = getSPARQLrtn(" ?Inferred a reas:Inference ; reas:gives/rdf:rest*/rdf:first ?statement . "); // the inferred triple
+        foreach (array_keys(bindings($qryRtnGiv)) as $key) // print the triple
+            print_r(fragment(qryRtnCell($qryRtnGiv, $key, 'statement')) . " ");
+            print_r("</p>\n<p>"); // between triple and explanation
+            $qryRtnExp = getSPARQLrtn(" ?Inferred a reas:Inference ; reas:evidence/rdf:first/rdf:rest*/rdf:first ?statement . "); // an inference's explanation
+            foreach (array_keys(bindings($qryRtnExp)) as $key) // dipslay each statement
+                print_r(fragment(qryRtnCell($qryRtnExp, $key, 'statement')) . " ");
+                print_r("</p>\n"); // end of explanation
+    } elseif ( $predicate1 != "b1"  ) { // if current show property in list is after 1st blank node which in this example is for the explBox lens because of sublenses
+        print_r("<tr class='propertyBox'>\n"); // Fresnel box model property box
+        print_r("<td class='labelBox'>" . fragment($predicate1) . "</td>\n"); // Fresnel box model label box with property label
+        objectBox($fmtQueries, $predicate1);
+        print_r("</td></tr>");
+    }
 }
 
 function objectBox($fmtQueries, $predicate1)
@@ -129,23 +141,11 @@ $showPropList = bindings(getSPARQLrtn(" <" . $lens . "> fresnel:showProperties/r
 		<!-- Fresnel container box here for completeness for specifications although only contains single resource box  -->
 		<table class='resourceBox'>
         <?php
-        if ($lens == "http://example.org/#explBox") {
-            print_r("<p>Explanation for: ");
-            $qryRtnGiv = getSPARQLrtn(" ?Inferred a reas:Inference ; reas:gives/rdf:rest*/rdf:first ?statement . "); // the inferred triple
-            foreach (array_keys(bindings($qryRtnGiv)) as $key) // print the triple
-                print_r(fragment(qryRtnCell($qryRtnGiv, $key, 'statement')) . " ");
-            print_r("</p>\n<p>"); // between triple and explanation
-            $qryRtnExp = getSPARQLrtn(" ?Inferred a reas:Inference ; reas:evidence/rdf:first/rdf:rest*/rdf:first ?statement . "); // an inference's explanation
-            foreach (array_keys(bindings($qryRtnExp)) as $key) // dipslay each statement
-                print_r(fragment(qryRtnCell($qryRtnExp, $key, 'statement')) . " ");
-            print_r("</p>\n"); // end of explanation
-        } else {
             /* walk through the show properties list to show the triples */
             foreach (array_keys($showPropList) as $key) { // for each property in the show properties list
                 $predicate1 = $showPropList[$key]['prop']['value']; // get the current property URI from the show properties list
                 propertyBox($fmtQueries, $predicate1); // output the HTML for the property box for all triples with this resource and property if any
             }
-        }
         print_r("</table></div>"); // close the resource box then container box
         ?>
 </body>
