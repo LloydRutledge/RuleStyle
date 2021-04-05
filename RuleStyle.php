@@ -77,37 +77,41 @@ function getValueStyle($thisPredicate, $thisObject, $fmtQueries) // get the valu
 
 function propertyBox($fmtQueries, $predicate1)
 {
+    print_r("<tr class='propertyBox'>\n"); // Fresnel box model property box
+    print_r("<td class='labelBox'>" ); // Fresnel box model label box with property label
     if ( $predicate1 == "b0" ) { // if current show property in list is 1st blank node which in this example is for the explBox lens because of sublenses
-        print_r("<p>Explanation for: ");
-        $qryRtnGiv = getSPARQLrtn(" ?Inferred a reas:Inference ; reas:gives/rdf:rest*/rdf:first ?statement . "); // the inferred triple
-        foreach (array_keys(bindings($qryRtnGiv)) as $key) // print the triple
-            print_r(fragment(qryRtnCell($qryRtnGiv, $key, 'statement')) . " ");
-            print_r("</p>\n<p>"); // between triple and explanation
-            $qryRtnExp = getSPARQLrtn(" ?Inferred a reas:Inference ; reas:evidence/rdf:first/rdf:rest*/rdf:first ?statement . "); // an inference's explanation
-            foreach (array_keys(bindings($qryRtnExp)) as $key) // dipslay each statement
-                print_r(fragment(qryRtnCell($qryRtnExp, $key, 'statement')) . " ");
-                print_r("</p>\n"); // end of explanation
+        print_r("Explanation for: ");
     } elseif ( $predicate1 != "b1"  ) { // if current show property in list is after 1st blank node which in this example is for the explBox lens because of sublenses
-        print_r("<tr class='propertyBox'>\n"); // Fresnel box model property box
-        print_r("<td class='labelBox'>" . fragment($predicate1) . "</td>\n"); // Fresnel box model label box with property label
-        objectBox($fmtQueries, $predicate1);
-        print_r("</td></tr>");
+        print_r(fragment($predicate1) );
     }
+    print_r("</td>\n");
+    objectBox($fmtQueries, $predicate1);
+    print_r("</td></tr>");
 }
 
 function objectBox($fmtQueries, $predicate1)
 {
     $valueStyle = getValueStyle($predicate1, "XXX", $fmtQueries); // FIX: implement object match
-    print_r("<td class='objectBox'" . $valueStyle ." >\n"); // Fresnel box model object box
+    print_r("<td class='objectBox' ". $valueStyle . " >\n"); // Fresnel box model object box
     valueBox($fmtQueries, $predicate1);
     reifyBox($valueStyle);
 }
 
 function valueBox($fmtQueries, $predicate1)
 {
-    $object = qryRtnCell(getSPARQLrtn(" <" . Resource . "> <" . $predicate1 . "> ?object "), 0, 'object'); // get object
     print_r("<span class='valueBox' >\n"); // Fresnel box model value box
-    internalLink($object, fragment($object)); // set Fresnel browser link to object
+    if ($predicate1 == "b0") { // if current show property in list is 1st blank node which in this example is for the explBox lens because of sublenses
+        $qryRtnGiv = getSPARQLrtn(" ?Inferred a reas:Inference ; reas:gives/rdf:rest*/rdf:first ?statement . "); // the inferred triple
+        foreach (array_keys(bindings($qryRtnGiv)) as $key) // print the triple
+            print_r(fragment(qryRtnCell($qryRtnGiv, $key, 'statement')) . " ");
+    } elseif ($predicate1 == "b1") {
+        $qryRtnExp = getSPARQLrtn(" ?Inferred a reas:Inference ; reas:evidence/rdf:first/rdf:rest*/rdf:first ?statement . "); // an inference's explanation
+        foreach (array_keys(bindings($qryRtnExp)) as $key) // dipslay each statement
+            print_r(fragment(qryRtnCell($qryRtnExp, $key, 'statement')) . " ");
+    } elseif ($predicate1 != "b1") { // if normal
+        $object = qryRtnCell(getSPARQLrtn(" <" . Resource . "> <" . $predicate1 . "> ?object "), 0, 'object'); // get object
+        internalLink($object, fragment($object)); // set Fresnel browser link to object
+    }
     print_r("</span> \n");
 }
 
