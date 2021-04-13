@@ -1,0 +1,20 @@
+prefix fresnel: <http://www.w3.org/2004/09/fresnel#> .
+prefix transfr: <http://is.cs.ou.nl/transfr#> .
+
+transfr:objectFormatDomain a owl:ObjectProperty ;
+    rdfs:domain fresnel:Format ;
+    rdfs:range rdfs:Resource .
+
+transfr:valueFormatDomain a owl:ObjectProperty ;
+    rdfs:domain fresnel:Format ;
+    rdfs:range rdfs:Resource .
+
+transfr:reifyFormatDomain a owl:ObjectProperty ;
+    rdfs:domain fresnel:Format ;
+    rdfs:range rdfs:Resource .
+
+transfr:reifyStyle a owl:DatatypeProperty ;
+    rdfs:isDefinedBy <http://is.cs.ou.nl/transfr> ;
+    rdfs:domain [ a owl:Class ;
+        owl:unionOf ( :Format :Group ) ] ;
+    rdfs:range dtype:string .
